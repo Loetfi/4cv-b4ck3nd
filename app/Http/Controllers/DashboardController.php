@@ -14,10 +14,13 @@ class DashboardController extends Controller
 
     public function index()
     {
-        try { 
-            // echo session()->get('user.Email');
+        try {  
+
             if (session()->get('user.Email') != NULL) {
                 return view('example');
+            } else {
+                session()->flash('info','Silakan login.');
+                return redirect('/');
             }
 
         } catch (\Exception $e) {
