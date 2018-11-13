@@ -178,6 +178,8 @@
 
                     <div class="content-i">
                         <div class="content-box">
+
+                            
                             
                             @yield('content')
                             <!--START - Color Scheme Toggler--> 
