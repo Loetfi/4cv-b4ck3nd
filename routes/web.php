@@ -11,10 +11,26 @@
 |
 */
 
-Route::get('/', function () {
-    return view('login');
-});
+// Route::get('/', function () {
+//     return view('login');
+// });
 
-Route::get('/home', function() {
-	return view('example');
+
+Route::get('home','DashboardController@index');
+
+	Route::get('/','Auth\LoginController@index');
+
+Route::group(['namespace'=>'Auth'], function() {
+
+	
+	Route::post('login','LoginController@login')->name('login');
+	// Route::get('home', 'HomeController@index')->name('home');
+
+	Route::group(['middleware'=>'check-access'], function() {
+		Route::get('logout','LoginController@logout');
+	});
+
+	// socialite
+	Route::get('auth/{provider}', 'AuthController@redirectToProvider');
+	Route::get('auth/{provider}/callback', 'AuthController@handleProviderCallback');
 });

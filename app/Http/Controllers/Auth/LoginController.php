@@ -2,38 +2,90 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Helpers\Api;
+use App\Http\Helpers\RestCurl;
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
-{
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
+{ 
 
-    use AuthenticatesUsers;
-
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function index()
     {
-        $this->middleware('guest')->except('logout');
+        try {
+            echo(1);
+
+            if (session()->get('user.Email') != NULL) {
+                // echo(2);
+                session()->flash('info','Hai, kamu masih mempunyai sesi login');
+                return redirect('/home');
+            } else {
+                session()->flash('info','Silahkan login');
+                return view('login');
+            }
+
+        } catch (Exception $e) {
+            session()->flash('error','Terdapat kesalahan, silahkan coba lagi');
+            return redirect('/');
+        }    
     }
+    
+
+
+    /**
+    * @param email required
+    * @param password required
+    * @return json success login, your account its not active, email or password wrong
+    */
+    public function login(Request $request)
+    {
+        try {
+
+
+            $param = array(
+                'email' => $request->email,
+                'password' => $request->password,
+            );
+            
+            $login =  (object) RestCurl::exec('POST',env('URL_SERVICE_ACCOUNT').'/admin-auth/login',$param);
+            // dd($login->data->message);
+            if ($login->status == 200 ) {
+                // success login
+                $access_token = $login->data->data->access_token;
+                $r =  (object) RestCurl::exec('GET',env('URL_SERVICE_ACCOUNT').'/admin-auth/check-token',[],$access_token);
+
+                session([
+                    'access_token'=>$access_token,
+                    'user' => (array) $r->data->data
+                ]);
+                
+                session()->flash('success','Hai, Selamat datang di halaman admin');
+                return redirect('/home');
+            } else {
+                // 2 condition, account not active or password wrong
+                session()->flash('error','Akun belum aktif');
+                return redirect('/');
+
+            }
+        } catch (\Exception $e) {
+            session()->flash('error','Terdapat kesalahan, silahkan coba lagi');
+            return redirect('/');
+        }
+    }
+
+    public function logout()
+    {
+        try {
+            $token  = session()->get('access_token');
+            $r =  (object) RestCurl::exec('GET', env('URL_SERVICE_ACCOUNT').'/auth/logout',[],$token);
+            // dd($r);
+
+        } catch (\Exception $e) {
+            return response()->json(Api::format('0',[],$e->getMessage()), 500);
+        }
+
+        session()->flush();
+        return redirect('/');
+    }   
 }

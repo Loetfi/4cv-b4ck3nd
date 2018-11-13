@@ -3,6 +3,9 @@
 @section('title','Example Backend')
 
 @section('content')
+
+@include('layouts.flash-message')
+
 <div class="row pt-4">
     <div class="col-sm-12">
         <!--START - Grid of tablo statistics-->
@@ -86,6 +89,7 @@
 <div class="row">
     <div class="col-sm-6 col-xxl-6">
         <div class="col-sm-12 d-xxxl-none">
+
             <!--START - Top Selling Chart-->
             <div class="element-wrapper">
                 <h6 class="element-header">
