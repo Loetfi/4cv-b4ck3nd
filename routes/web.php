@@ -18,12 +18,17 @@
 
 Route::get('home','DashboardController@index');
 
-Route::get('/','Auth\LoginController@index');
+// Route::get('/','Auth\LoginController@index');
+Route::get('login','Auth\LoginController@index');
+
+Route::get('/', function () {
+    return redirect('login');
+});
 
 Route::group(['namespace'=>'Auth'], function() {
 
 	
-	Route::post('login','LoginController@login')->name('login');
+	Route::post('login-proses','LoginController@login')->name('login-proses');
 	Route::get('logout','LoginController@logout');
 	// Route::get('home', 'HomeController@index')->name('home');
 

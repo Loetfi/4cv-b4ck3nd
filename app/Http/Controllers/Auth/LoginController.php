@@ -26,7 +26,7 @@ class LoginController extends Controller
 
         } catch (Exception $e) {
             session()->flash('error','Terdapat kesalahan, silahkan coba lagi');
-            return redirect('/');
+            return redirect('/login');
         }    
     }
     
@@ -64,12 +64,12 @@ class LoginController extends Controller
             } else {
                 // 2 condition, account not active or password wrong
                 session()->flash('error',@$login->data->message);
-                return redirect('/');
+                return redirect('/login');
 
             }
         } catch (\Exception $e) {
             session()->flash('error','Terdapat kesalahan, silahkan coba lagi');
-            return redirect('/');
+            return redirect('/login');
         }
     }
 
@@ -85,6 +85,6 @@ class LoginController extends Controller
         }
 
         session()->flush();
-        return redirect('/');
+        return redirect('/login');
     }   
 }

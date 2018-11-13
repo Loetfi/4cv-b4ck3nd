@@ -30,7 +30,7 @@
             <h4 class="auth-header">
                 Login Form
             </h4>
-            <form action="{{ route('login') }}" method="POST">
+            <form action="{{ route('login-proses') }}" method="POST">
             @include('layouts.flash-message')
                 @csrf
                 <div class="form-group">
