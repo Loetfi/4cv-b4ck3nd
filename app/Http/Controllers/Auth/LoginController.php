@@ -14,7 +14,6 @@ class LoginController extends Controller
     public function index()
     {
         try {
-            echo(1);
 
             if (session()->get('user.Email') != NULL) {
                 // echo(2);
@@ -64,7 +63,7 @@ class LoginController extends Controller
                 return redirect('/home');
             } else {
                 // 2 condition, account not active or password wrong
-                session()->flash('error','Akun belum aktif');
+                session()->flash('error',@$login->data->message);
                 return redirect('/');
 
             }
